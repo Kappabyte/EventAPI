@@ -1,0 +1,17 @@
+name: EventAPI
+main: net.kappabyte.spigot.events.Events
+version: 1.0
+author: Kappabyte
+api-version: 1.13
+
+commands:
+  joinevent:
+    description: Join the current event
+    usage: /joinevent
+  leaveevent:
+    description: Leave the current event
+    usage: /leaveevent
+  eventapi:
+    description: Manage the event API
+    permission: eventapi.admin
+    usage: /eventapi [reload]

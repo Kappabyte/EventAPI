@@ -1,0 +1,3 @@
+# The backend service you would like to use for the event. If you are running a Bungeecord server
+# use 'bungee'. If not, use 'spigot'
+backend: spigot

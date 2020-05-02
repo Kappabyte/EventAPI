@@ -1,0 +1,10 @@
+net\kappabyte\spigot\eventapi\bungee\BungeeAPI.class
+net\kappabyte\spigot\eventapi\API.class
+net\kappabyte\spigot\eventapi\bungee\BungeeMessageHandler.class
+net\kappabyte\spigot\eventapi\game\Game.class
+net\kappabyte\spigot\eventapi\game\GamePlayer.class
+net\kappabyte\spigot\eventapi\scoreboard\Scoreboard.class
+net\kappabyte\spigot\eventapi\game\states\GameState.class
+net\kappabyte\spigot\eventapi\backend\BackendHandler.class
+net\kappabyte\spigot\eventapi\backend\BungeeBackendHandler.class
+net\kappabyte\spigot\eventapi\backend\SpigotBackendHandler.class
