@@ -1,0 +1,41 @@
+backend:
+  type: YAML
+  useuuids: false
+  saveAllUsers: true
+  deleteUsersOnCleanup: false
+  uuidfetchercooldown: 3000
+mysql:
+  user: bungeeperms
+  password: password
+  tableprefix: bungeeperms_
+  url: jdbc:mysql://localhost:3306/bungeeperms?autoReconnect=true&dontTrackOpenResources=true
+debug:
+  path: plugins/BungeePerms/debug.log
+  showexceptions: true
+  showlogs: false
+permissions:
+  useregexperms: false
+  grouppermission: true
+  resolvingmode: SEQUENTIAL
+ingame:
+  notify:
+    promote: false
+    demote: false
+  tabcomplete: false
+  terminate:
+    prefix:
+      reset: true
+      space: true
+    suffix:
+      reset: true
+      space: true
+offlinecleanup:
+  interval: 1800
+  threshold: 600
+misc:
+  async-commands: true
+  locale: en-GB
+network:
+  type: Global
+  servers: []
+version: 1

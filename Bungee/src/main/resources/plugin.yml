@@ -1,0 +1,4 @@
+name: Events
+main: net.kappabyte.bungee.events.Events
+version: 1.0
+author: Kappabyte
