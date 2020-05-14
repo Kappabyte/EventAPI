@@ -17,6 +17,7 @@ public class BungeeMessageHandler {
             case "add":
                 if(p != null) {
                     Game.currentGame.addPlayer(p);
+                    Game.currentGame.oldPlayerLocations.put(p, p.getLocation());
                 } else {
                     GamePlayer.toAdd.add(player);
                 }

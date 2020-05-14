@@ -50,6 +50,8 @@ public class EventSystemAPI {
                 addPlayer(team.player2);
             }
         }
+
+        BungeeAPI.sendMessage("start", "", "");
     }
 
     public static void closeEvent() {
@@ -80,7 +82,9 @@ public class EventSystemAPI {
         currentEvent.playerOriginalPosition.put(player, player.getServer().getInfo());
 
         player.sendMessage(new ComponentBuilder(prefix).append("Joined the event!").create());
-        player.connect(Events.instance.getProxy().getServerInfo(ConfigManager.getEventServer()));
+        if(!player.getServer().getInfo().getName().equals(ConfigManager.getEventServer())) {
+            player.connect(Events.instance.getProxy().getServerInfo(ConfigManager.getEventServer()));
+        }
 
         BungeeAPI.addPlayer(player);
 
@@ -103,7 +107,11 @@ public class EventSystemAPI {
 
         BungeeAPI.removePlayer(player);
 
-        player.connect(currentEvent.playerOriginalPosition.get(player));
+        currentEvent.players.remove(player.getName());
+
+        if(!player.getServer().getInfo().getName().equals(currentEvent.playerOriginalPosition.get(player).getName())) {
+            player.connect(currentEvent.playerOriginalPosition.get(player));
+        }
         currentEvent.playerOriginalPosition.remove(player);
 
         for (ProxiedPlayer p : Events.instance.getProxy().getPlayers()) {
@@ -123,8 +131,9 @@ public class EventSystemAPI {
         currentEvent.players.put(player.getName(), player);
         currentEvent.playerOriginalPosition.put(player, player.getServer().getInfo());
 
-        player.connect(Events.instance.getProxy().getServerInfo(ConfigManager.getEventServer()));
-
+        if(!player.getServer().getInfo().getName().equals(ConfigManager.getEventServer())) {
+            player.connect(Events.instance.getProxy().getServerInfo(ConfigManager.getEventServer()));
+        }
         BungeeAPI.addPlayer(player);
 
         return true;
@@ -137,7 +146,9 @@ public class EventSystemAPI {
         }
         currentEvent.players.remove(player.getName());
 
-        player.connect(currentEvent.playerOriginalPosition.get(player));
+        if(!player.getServer().getInfo().getName().equals(currentEvent.playerOriginalPosition.get(player).getName())) {
+            player.connect(currentEvent.playerOriginalPosition.get(player));
+        }
         currentEvent.playerOriginalPosition.remove(player);
 
         BungeeAPI.removePlayer(player);
@@ -176,6 +187,10 @@ public class EventSystemAPI {
     }
 
     public static void setFirstPlace(String player) {
+        Events.instance.getLogger().info("Event Storage: " + ConfigManager.eventStorage);
+        Events.instance.getLogger().info("CurrentEvent: " + currentEvent);
+        Events.instance.getLogger().info("Start Time: " + currentEvent.eventStartTime);
+        Events.instance.getLogger().info("Get Time: " + currentEvent.eventStartTime.getTime());
         ConfigManager.eventStorage.set("events." + currentEvent.eventStartTime.getTime() + ".first", player);
     }
 

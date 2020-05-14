@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 import net.kappabyte.bungee.events.Events;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -47,6 +48,7 @@ public class BungeeAPI {
                 out.writeUTF(key);
                 out.writeUTF(player);
                 out.writeUTF(value);
+                out.writeUTF(UUID.randomUUID().toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

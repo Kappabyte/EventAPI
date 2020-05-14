@@ -12,6 +12,8 @@ import net.kappabyte.bungee.events.Config.ConfigManager;
 import net.kappabyte.bungee.events.commands.JoinEventCmd;
 import net.kappabyte.bungee.events.commands.LeaveEventCmd;
 import net.kappabyte.bungee.events.commands.ReloadCmd;
+import net.kappabyte.bungee.events.commands.TeamCmd;
+import net.kappabyte.bungee.events.commands.TournamentCmd;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -26,6 +28,8 @@ public class Events extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, new JoinEventCmd());
         getProxy().getPluginManager().registerCommand(this, new LeaveEventCmd());
         getProxy().getPluginManager().registerCommand(this, new ReloadCmd());
+        getProxy().getPluginManager().registerCommand(this, new TournamentCmd());
+        getProxy().getPluginManager().registerCommand(this, new TeamCmd());
 
         getProxy().getScheduler().schedule(this, CurrencyHandler.getInstance(), 0, 5, TimeUnit.MINUTES);
 

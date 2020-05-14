@@ -77,18 +77,6 @@ public class BungeeMessageHandler {
             case "updateplayerbalance":
                 BungeeAPI.sendMessage("updateplayerbalance", player, CurrencyHandler.getInstance().updateCurrency(player, Integer.parseInt(value)) + "");
                 break;
-            case "addteam":
-                if(!Tournament.getTournamentActive()) {
-                    Tournament.createTournament();
-                }
-                Tournament.getTournament().addTeam(Events.instance.getProxy().getPlayer(player.split(" + ")[0]), Events.instance.getProxy().getPlayer(player.split(" + ")[1]));
-                break;
-            case "removeteam":
-                if(!Tournament.getTournamentActive()) {
-                    Tournament.createTournament();
-                }
-                Tournament.getTournament().addTeam(Events.instance.getProxy().getPlayer(player.split(" + ")[0]), Events.instance.getProxy().getPlayer(player.split(" + ")[1]));
-                break;
         }
     }
 }

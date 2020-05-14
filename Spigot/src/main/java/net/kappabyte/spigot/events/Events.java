@@ -41,6 +41,13 @@ public class Events extends JavaPlugin implements Listener {
 
         createCustomConfig();
     }
+
+    @Override
+    public void onDisable() {
+        if(Game.currentGame != null) {
+            Game.currentGame.onGameEnd();
+        }
+    }
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

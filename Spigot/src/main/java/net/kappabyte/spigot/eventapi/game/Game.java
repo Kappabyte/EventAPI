@@ -2,6 +2,7 @@ package net.kappabyte.spigot.eventapi.game;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -58,6 +59,11 @@ public abstract class Game implements Runnable, Listener {
     private HashMap<Player, Collection<PotionEffect>> playerEffects = new HashMap<Player, Collection<PotionEffect>>();
     private HashMap<Player, Double> playerHealth = new HashMap<Player, Double>();
     private HashMap<Player, Integer> playerHunger = new HashMap<Player, Integer>();
+
+    private HashMap<Player, Float> playerExp = new HashMap<Player, Float>();
+    private HashMap<Player, Integer> playerLevels = new HashMap<Player, Integer>();
+
+    public HashMap<Player, Location> oldPlayerLocations = new HashMap<Player, Location>();
     
     /**
      * Location player should be teleported to when joining the game.
@@ -109,6 +115,11 @@ public abstract class Game implements Runnable, Listener {
             API.getPlugin().getLogger().info("Adding player to rankings: " + player.name + " / " + i);
             i++;
         }
+        rankedPlayerList.removeAll(Collections.singleton(null)); //Remove all null elements from the array
+        API.getPlugin().getLogger().info("Final Player Rankings: ");
+        for(int index = 0; index < rankedPlayerList.size(); index++) {
+            API.getPlugin().getLogger().info(index + ": " + rankedPlayerList.get(index));
+        }
         GamePlayer[] rankings = new GamePlayer[rankedPlayerList.size()];
         rankings = rankedPlayerList.toArray(rankings);
         API.handler.endGame(rankings);
@@ -130,6 +141,8 @@ public abstract class Game implements Runnable, Listener {
             }
             player.bukkitPlayer.setHealth(playerHealth.get(player.bukkitPlayer));
             player.bukkitPlayer.setFoodLevel(playerHunger.get(player.bukkitPlayer));
+            player.bukkitPlayer.setExp(playerExp.get(player.bukkitPlayer));
+            player.bukkitPlayer.setLevel(playerLevels.get(player.bukkitPlayer));
         }
         for(Player player : spectators.values()) {
             player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
@@ -148,6 +161,12 @@ public abstract class Game implements Runnable, Listener {
             }
             player.setHealth(playerHealth.get(player));
             player.setFoodLevel(playerHunger.get(player));
+            player.setExp(playerExp.get(player));
+            player.setLevel(playerLevels.get(player));
+        }
+
+        for(Player player : oldPlayerLocations.keySet()) {
+            player.teleport(oldPlayerLocations.get(player));
         }
 
         PlayerDeathEvent.getHandlerList().unregister(this);
@@ -163,7 +182,7 @@ public abstract class Game implements Runnable, Listener {
                 player.bukkitPlayer.sendMessage(ChatColor.GOLD + "Second Place: " + ChatColor.RESET + rankings[1].name);
             }
             if(rankings.length > 2) {
-                player.bukkitPlayer.sendMessage(ChatColor.GOLD + "Third Place: " + ChatColor.RESET + rankings[3].name);
+                player.bukkitPlayer.sendMessage(ChatColor.GOLD + "Third Place: " + ChatColor.RESET + rankings[2].name);
             }
             player.bukkitPlayer.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.STRIKETHROUGH + "                       " + StringUtils.repeat(" ", name.length()) + "                       ");
 
@@ -173,6 +192,16 @@ public abstract class Game implements Runnable, Listener {
         EntityDamageEvent.getHandlerList().unregister(this);
         PlayerJoinEvent.getHandlerList().unregister(this);
         PlayerQuitEvent.getHandlerList().unregister(this);
+    }
+
+    public void setPlayerRanking(GamePlayer player, int ranking) {
+        API.getPlugin().getLogger().info("Setting player ranking: " + player.name + " to " + ranking + "\n\nCurrentRankedList:");
+        rankedPlayerList.add(ranking, player);
+        for(GamePlayer p : rankedPlayerList) {
+            if(p != null) {
+                API.getPlugin().getLogger().info(rankedPlayerList.indexOf(p) + ": " + p.name);
+            }
+        }
     }
 
     /**
@@ -203,8 +232,12 @@ public abstract class Game implements Runnable, Listener {
             }
             playerHealth.put(player.bukkitPlayer, player.bukkitPlayer.getHealth());
             playerHunger.put(player.bukkitPlayer, player.bukkitPlayer.getFoodLevel());
+            playerExp.put(player.bukkitPlayer, player.bukkitPlayer.getExp());
+            playerLevels.put(player.bukkitPlayer, player.bukkitPlayer.getLevel());
 
             PlayerInv.clearInventory(player.bukkitPlayer.getInventory());
+            player.bukkitPlayer.setExp(0);
+            player.bukkitPlayer.setLevel(0);
             currentGame.currentState.OnPlayerJoin(player);
             currentGame.players.put(player.name, player);
             
@@ -214,12 +247,16 @@ public abstract class Game implements Runnable, Listener {
         }
     }
 
+    private ArrayList<GamePlayer> markedForSpectator = new ArrayList<GamePlayer>();
+
     /**
      * Call to remove player from the game, but keep them as a spectator.
      */
-    public void makePlayerSpectator(GamePlayer player) {
-        players.remove(player.name);
-        spectators.put(player.name, player.bukkitPlayer);
+    public void makePlayerSpectator(GamePlayer player, boolean addToRankings) {
+        markedForRemoval.add(player);
+        if(addToRankings) {
+            currentGame.rankedPlayerList.set(currentGame.players.size(), player);
+        }
     }
 
     /**
@@ -230,20 +267,49 @@ public abstract class Game implements Runnable, Listener {
         removePlayer(gamePlayer);
     }
 
+    private ArrayList<GamePlayer> markedForRemoval = new ArrayList<GamePlayer>();
+
     /**
      * Call to remove player from the game - makes them go pack to their old location, and all references to the player are destroyed.
      */
     public void removePlayer(GamePlayer player) {
         if(currentGame.players.containsKey(player.name)) {
 
+            PlayerInv.clearInventory(player.bukkitPlayer.getInventory());
+            playerInventories.get(player.bukkitPlayer).setInventoryContents(player.bukkitPlayer.getInventory());
+            player.bukkitPlayer.setGameMode(playerGamemodes.get(player.bukkitPlayer));
+            for(PotionEffect effect : player.bukkitPlayer.getActivePotionEffects()) {
+                player.bukkitPlayer.removePotionEffect(effect.getType());
+            }
+            for(PotionEffect effect : playerEffects.get(player.bukkitPlayer)) {
+                player.bukkitPlayer.addPotionEffect(effect);
+            }
+            player.bukkitPlayer.setHealth(playerHealth.get(player.bukkitPlayer));
+            player.bukkitPlayer.setFoodLevel(playerHunger.get(player.bukkitPlayer));
+            player.bukkitPlayer.setExp(playerExp.get(player.bukkitPlayer));
+            player.bukkitPlayer.setLevel(playerLevels.get(player.bukkitPlayer));
+
+            if(oldPlayerLocations.containsKey(player.bukkitPlayer)) {
+                player.bukkitPlayer.teleport(oldPlayerLocations.get(player.bukkitPlayer));
+            }
+
             currentGame.currentState.OnPlayerLeave(player);
-            currentGame.players.remove(player.name);
             currentGame.rankedPlayerList.set(currentGame.players.size(), player);
         }
     }
 
     @Override
     public void run() {
+        if(currentGame != null) {
+            for(GamePlayer player : markedForSpectator) {
+                players.remove(player.name);
+                spectators.put(player.name, player.bukkitPlayer);
+            }
+            for(GamePlayer player : markedForRemoval) {
+                players.remove(player.name);
+                spectators.put(player.name, player.bukkitPlayer);
+            }
+        }
         if(currentGame.currentState != null) {
             currentGame.currentState.OnStateExecute(players, spectators);
         }
@@ -283,7 +349,10 @@ public abstract class Game implements Runnable, Listener {
                 case DO_NOTHING:
                     break;
                 case MAKE_SPECTATOR:
-                    currentGame.makePlayerSpectator(players.get(dead.getName()));
+                    currentGame.makePlayerSpectator(players.get(dead.getName()), false);
+                    break;
+                case MAKE_SPECTATOR_RANK:
+                    currentGame.makePlayerSpectator(players.get(dead.getName()), true);
                     break;
                 case REMOVE_PLAYER:
                     currentGame.removePlayer(players.get(dead.getName()));
@@ -311,19 +380,6 @@ public abstract class Game implements Runnable, Listener {
         currentGame.currentState.OnPlayerLeave(currentGame.players.get(e.getPlayer().getName()));
 
         if(currentGame.players.containsKey(e.getPlayer().getName())) {
-            GamePlayer player = currentGame.players.get(e.getPlayer().getName());
-
-            PlayerInv.clearInventory(player.bukkitPlayer.getInventory());
-            playerInventories.get(player.bukkitPlayer).setInventoryContents(player.bukkitPlayer.getInventory());
-            player.bukkitPlayer.setGameMode(playerGamemodes.get(player.bukkitPlayer));
-            for(PotionEffect effect : player.bukkitPlayer.getActivePotionEffects()) {
-                player.bukkitPlayer.removePotionEffect(effect.getType());
-            }
-            for(PotionEffect effect : playerEffects.get(player.bukkitPlayer)) {
-                player.bukkitPlayer.addPotionEffect(effect);
-            }
-            player.bukkitPlayer.setHealth(playerHealth.get(player.bukkitPlayer));
-            player.bukkitPlayer.setFoodLevel(playerHunger.get(player.bukkitPlayer));
 
             currentGame.removePlayer(currentGame.players.get(e.getPlayer().getName()));
         }

@@ -2,6 +2,7 @@ package net.kappabyte.spigot.eventapi.bungee;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.util.ArrayList;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -13,13 +14,15 @@ import net.kappabyte.spigot.eventapi.API;
 
 public class BungeeAPI implements PluginMessageListener {
 
-    public void sendData(String key, String player, String value) {
+    private static ArrayList<String> seenUUIDS = new ArrayList<String>();
+
+    public void sendData(String key, Player player, String playerName, String value) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(key);
-        out.writeUTF(player);
+        out.writeUTF(playerName);
         out.writeUTF(value);
 
-        API.getPlugin().getServer().sendPluginMessage(API.getPlugin(), "BungeeCord", out.toByteArray()); // Send to Bungee
+        player.sendPluginMessage(API.getPlugin(), "BungeeCord", out.toByteArray()); // Send to Bungee
     }
 
     @Override
@@ -30,8 +33,14 @@ public class BungeeAPI implements PluginMessageListener {
             String key = in.readUTF(); // Read the channel
             String player = in.readUTF(); // Read the message
             String value = in.readUTF(); // Read the message
+            String uuid = in.readUTF(); // Read the message
             
-            BungeeMessageHandler.handle(key, player, value);
+            if(seenUUIDS.contains(uuid)) {
+                API.getPlugin().getLogger().info("Message is a duplicate. Skipping...");
+            } else {
+                seenUUIDS.add(uuid);
+                BungeeMessageHandler.handle(key, player, value);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

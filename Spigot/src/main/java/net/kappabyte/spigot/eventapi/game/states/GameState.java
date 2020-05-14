@@ -45,6 +45,6 @@ public abstract class GameState {
     }
 
     public static enum PlayerRemoveType {
-        DO_NOTHING, MAKE_SPECTATOR, REMOVE_PLAYER
+        DO_NOTHING, MAKE_SPECTATOR, MAKE_SPECTATOR_RANK, REMOVE_PLAYER
     }
 }
