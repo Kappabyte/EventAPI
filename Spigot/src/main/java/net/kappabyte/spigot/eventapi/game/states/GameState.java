@@ -31,12 +31,24 @@ public abstract class GameState {
     public void OnPlayerJoin(GamePlayer player) {
         
     }
+
+    public void OnSpectatorJoin(Player player) {
+        
+    }
     
     public void OnPlayerLeave(GamePlayer player) {
         
     }
 
+    public void OnSpectatorLeave(Player player) {
+
+    }
+
     public void OnPlayerKill(GamePlayer player) {
+        
+    }
+
+    public void OnPlayerRevive(GamePlayer player) {
         
     }
 

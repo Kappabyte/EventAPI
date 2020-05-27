@@ -3,6 +3,7 @@ d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyt
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\API.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\gui\EventMenu.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\gui\GuiManager.java
+d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\tournament\TournamentTeam.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\events\API\Event.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\bungee\BungeeMessageHandler.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\events\API\EventSystemAPI.java
@@ -11,8 +12,10 @@ d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyt
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\backend\BungeeBackendHandler.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\game\Game.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\tournament\Tournament.java
+d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\game\states\StateWaiting.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\bungee\BungeeAPI.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\PlayerInv.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\scoreboard\Scoreboard.java
+d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\game\GamePlayerData.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\events\Events.java
 d:\Programming\Java\Minecraft Plugins\EventAPI\Spigot\src\main\java\net\kappabyte\spigot\eventapi\backend\SpigotBackendHandler.java

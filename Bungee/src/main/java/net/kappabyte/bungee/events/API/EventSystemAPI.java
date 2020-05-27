@@ -39,7 +39,10 @@ public class EventSystemAPI {
     }
 
     public static void openEvent() {
-        if(currentEvent == null) return;
+        if(currentEvent == null) { 
+            BungeeAPI.sendMessage("failopen", "", "");
+            return;
+        }
         currentEvent.host.sendMessage(new ComponentBuilder(prefix).append("opened the event!").create());
         currentEvent.open = true;
         BungeeAPI.sendMessage("open", currentEvent.host.getName(), currentEvent.name);
@@ -49,9 +52,12 @@ public class EventSystemAPI {
                 addPlayer(team.player1);
                 addPlayer(team.player2);
             }
-        }
+            for(ProxiedPlayer player : Tournament.getTournament().getSpectators()) {
+                addSpectator(player);
+            }
 
-        BungeeAPI.sendMessage("start", "", "");
+            BungeeAPI.sendMessage("start", "", "");
+        }
     }
 
     public static void closeEvent() {
@@ -90,7 +96,7 @@ public class EventSystemAPI {
 
         for (ProxiedPlayer p : Events.instance.getProxy().getPlayers()) {
             if (!p.getName().equals(player.getName())) {
-                player.sendMessage(new ComponentBuilder(prefix).append(player.getName()).color(ChatColor.AQUA).append(" has joined th event!").create());
+                player.sendMessage(new ComponentBuilder(prefix).append(player.getName()).color(ChatColor.AQUA).append(" has joined the event!").create());
             }
         }
 
@@ -139,6 +145,22 @@ public class EventSystemAPI {
         return true;
     }
 
+    public static boolean addSpectator(ProxiedPlayer player) {
+        if(currentEvent == null) return false;
+        if (!currentEvent.open) {
+            return false;
+        }
+        currentEvent.spectators.put(player.getName(), player);
+        currentEvent.playerOriginalPosition.put(player, player.getServer().getInfo());
+
+        if(!player.getServer().getInfo().getName().equals(ConfigManager.getEventServer())) {
+            player.connect(Events.instance.getProxy().getServerInfo(ConfigManager.getEventServer()));
+        }
+        BungeeAPI.addSpectator(player);
+
+        return true;
+    }
+
     public static boolean removePlayer(ProxiedPlayer player) {
         if(currentEvent == null) return false;
         if(!currentEvent.players.containsKey(player.getName())) {
@@ -152,6 +174,23 @@ public class EventSystemAPI {
         currentEvent.playerOriginalPosition.remove(player);
 
         BungeeAPI.removePlayer(player);
+
+        return true;
+    }
+
+    public static boolean removeSpectator(ProxiedPlayer player) {
+        if(currentEvent == null) return false;
+        if(!currentEvent.spectators.containsKey(player.getName())) {
+            return false;
+        }
+        currentEvent.spectators.remove(player.getName());
+
+        if(!player.getServer().getInfo().getName().equals(currentEvent.playerOriginalPosition.get(player).getName())) {
+            player.connect(currentEvent.playerOriginalPosition.get(player));
+        }
+        currentEvent.playerOriginalPosition.remove(player);
+
+        BungeeAPI.removeSpectator(player);
 
         return true;
     }
@@ -177,10 +216,15 @@ public class EventSystemAPI {
         asking.sendMessage(new ComponentBuilder(prefix).append("The player ").append(player).color(ChatColor.AQUA).append(currentEvent.players.containsKey(player) ? " is " : " is not ").color(ChatColor.GRAY).append("in the event").create());
     }
 
-    public static void endGame() {
+    public static void endGame(boolean tp) {
         if(currentEvent == null) return;
-        for(ProxiedPlayer player : currentEvent.players.values()) {
-            player.connect(currentEvent.playerOriginalPosition.get(player));
+
+        if(tp) {
+            for(ProxiedPlayer player : currentEvent.players.values()) {
+                if(!player.getServer().getInfo().getName().equals(currentEvent.playerOriginalPosition.get(player).getName())) {
+                    player.connect(currentEvent.playerOriginalPosition.get(player));
+                }
+            }
         }
 
         currentEvent = null;

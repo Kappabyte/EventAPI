@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import net.kappabyte.spigot.eventapi.API;
+import net.kappabyte.spigot.eventapi.game.Game;
 import net.kappabyte.spigot.events.Events;
 import net.md_5.bungee.api.ChatColor;
 
@@ -103,7 +104,7 @@ public class EventSystemAPI {
             }
         }
         try {
-            currentEvent.game.getClass().getMethod("removePlayer", Player.class).invoke(currentEvent.game, player);
+            currentEvent.game.getClass().getMethod("removePlayer", Player.class, Game.RemoveReason.class).invoke(currentEvent.game, player, Game.RemoveReason.LEFT_GAME);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             currentEvent.host.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName()
@@ -195,12 +196,14 @@ public class EventSystemAPI {
         return currentEvent.players.containsKey(player);
     }
 
-    public static void endGame() {
+    public static void endGame(boolean tp) {
         if (currentEvent == null)
             return;
-        // Teleport everyone back to where they where
-        for (Player player : currentEvent.players.values()) {
-            player.teleport(currentEvent.playerOriginalPosition.get(player));
+        // Teleport everyone back to where they where if wanted
+        if(tp) {
+            for (Player player : currentEvent.players.values()) {
+                player.teleport(currentEvent.playerOriginalPosition.get(player));
+            }
         }
 
         // Remove the event

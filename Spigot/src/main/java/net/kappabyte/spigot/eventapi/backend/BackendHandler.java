@@ -22,5 +22,7 @@ public interface BackendHandler {
     public void getHost(Player player);
 
     public void endGame();
-    public void endGame(GamePlayer[] rankings);
+    public void endGame(String[] rankings);
+    public void endGameNoTP();
+    public void endGameNoTP(String[] rankings);
 }

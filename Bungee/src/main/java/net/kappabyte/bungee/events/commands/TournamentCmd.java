@@ -12,7 +12,7 @@ public class TournamentCmd extends Command {
     public static boolean canJoinEvent = false;
 
     public TournamentCmd() {
-        super("tournament");
+        super("tournament", "tournament.manage", "tourn", "t");
     }
 
     @Override

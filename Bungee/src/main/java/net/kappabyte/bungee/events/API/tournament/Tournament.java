@@ -13,6 +13,7 @@ public class Tournament {
     private ProxiedPlayer host;
 
     private ArrayList<TournamentTeam> teams = new ArrayList<TournamentTeam>();
+    private ArrayList<ProxiedPlayer> spectators = new ArrayList<ProxiedPlayer>();
 
     public static void createTournament(ProxiedPlayer player) {
         tournament = new Tournament();
@@ -20,7 +21,64 @@ public class Tournament {
 
         tournament.host = player;
 
+        tournament.spectators.add(player);
+
         BungeeAPI.sendTournamentMessage("create", player.getName(), "");
+    }
+
+    public void sendAllData() {
+        if (isTournementActive) {
+            BungeeAPI.sendTournamentMessage("create", host.getName(), "");
+            sleep();
+            for(TournamentTeam team : teams) {
+                BungeeAPI.sendTournamentMessage("addTeam", team.player1.getName(), team.player2.getName());
+                sleep();
+
+                BungeeAPI.sendTournamentMessage("points", team.getTeamName(), team.getTotalPoints() + "");
+                sleep();
+            }
+        }
+    }
+
+    public boolean getPlayerIsSpectator(ProxiedPlayer player) {
+        return spectators.contains(player);
+    }
+
+    public void addSpectator(ProxiedPlayer player) {
+        if(!getPlayerIsSpectator(player)) {
+            BungeeAPI.sendTournamentMessage("addSpec", player.getName(), "");
+            spectators.add(player);
+        }
+    }
+
+    public void removeSpectator(ProxiedPlayer player) {
+        if(getPlayerIsSpectator(player)) {
+            BungeeAPI.sendTournamentMessage("removeSpec", player.getName(), "");
+            spectators.remove(player);
+        }
+    }
+
+    public ArrayList<ProxiedPlayer> getSpectators() {
+        return spectators;
+    }
+
+    public boolean getPlayerIsInTeam(ProxiedPlayer player) {
+        for(TournamentTeam team : teams) {
+            if(team.player1.getName().equals(player.getName())) {
+                return true;
+            }
+            if(team.player2.getName().equals(player.getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {}
     }
 
     public static void endTournament() {
@@ -86,13 +144,19 @@ public class Tournament {
     public void giveTeamPoints(TournamentTeam team, int amount) {
         if(teams.contains(team)) {
             team.awardPoints(amount);
-            BungeeAPI.sendTournamentMessage("points", team.player1.getName(), team.getTotalPoints() + "");
         }
     }
 
     public void giveTeamPoints(int index, int amount) {
         teams.get(index).awardPoints(amount);
-        BungeeAPI.sendTournamentMessage("points", teams.get(index).player1.getName(), teams.get(index).getTotalPoints() + "");
+    }
+    
+    public void giveTeamPoints(String teamName, int amount) {
+        for(TournamentTeam team : teams) {
+            if(team.getTeamName().equals(teamName)) {
+                team.awardPoints(amount);
+            }
+        }
     }
 
     public void giveTeamPoints(ProxiedPlayer player, int amount) {

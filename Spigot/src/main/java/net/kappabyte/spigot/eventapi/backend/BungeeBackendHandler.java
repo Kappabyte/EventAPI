@@ -3,24 +3,38 @@ package net.kappabyte.spigot.eventapi.backend;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.kappabyte.spigot.eventapi.API;
 import net.kappabyte.spigot.eventapi.bungee.BungeeAPI;
 import net.kappabyte.spigot.eventapi.game.Game;
 import net.kappabyte.spigot.eventapi.game.GamePlayer;
 
 public class BungeeBackendHandler implements BackendHandler {
 
+    public static Game pastGame;
+    public static Player pastHost;
+
     @Override
     public void createEvent(Game game, Player host) {
-        BungeeAPI.getInstance().sendData("create", host, host.getName(), game.name);
+        pastGame = game;
+        pastHost = host;
+        if(game != null && host != null) {
+            BungeeAPI.getInstance().sendData("create", host, host.getName(), game.name);
+        }
     }
 
     @Override
     public void openEvent() {
+        API.getPlugin().getLogger().info("opening event!");
         Player player = null;
-        if(Bukkit.getOnlinePlayers().size() > 1) {
-            player = Bukkit.getOnlinePlayers().stream().findFirst().get();
+        API.getPlugin().getLogger().info("finding player!");
+        if(Bukkit.getOnlinePlayers().size() >= 1) {
+            API.getPlugin().getLogger().info("found player!");
+            player = Bukkit.getOnlinePlayers().stream().findAny().get();
+            API.getPlugin().getLogger().info("got player!");
         }
+        API.getPlugin().getLogger().info("checking player!");
         if(player != null) {
+            API.getPlugin().getLogger().info("sending data!");
             BungeeAPI.getInstance().sendData("open", player, "", "");
         }
     }
@@ -89,17 +103,35 @@ public class BungeeBackendHandler implements BackendHandler {
     }
 
     @Override
-    public void endGame(GamePlayer[] rankings) {
+    public void endGame(String[] rankings) {
         String ranks = "";
-        for(GamePlayer player : rankings) {
-            if(player != null) ranks += player.name + ".";
+        for(String player : rankings) {
+            if(player != null) ranks += player + ".";
         }
         if(ranks.length() - 1 < 0) {
             endGame();
             return;
         }
         ranks.substring(0, ranks.length() - 1);
-        BungeeAPI.getInstance().sendData("end", rankings[0].bukkitPlayer, "", ranks);
+        BungeeAPI.getInstance().sendData("end", Bukkit.getOnlinePlayers().stream().findFirst().get(), "", ranks);
     }
 
+    @Override
+    public void endGameNoTP() {
+        BungeeAPI.getInstance().sendData("end", Bukkit.getOnlinePlayers().stream().findFirst().get(), "notp", "");
+    }
+
+    @Override
+    public void endGameNoTP(String[] rankings) {
+        String ranks = "";
+        for(String player : rankings) {
+            if(player != null) ranks += player + ".";
+        }
+        if(ranks.length() - 1 < 0) {
+            endGame();
+            return;
+        }
+        ranks.substring(0, ranks.length() - 1);
+        BungeeAPI.getInstance().sendData("end", Bukkit.getOnlinePlayers().stream().findFirst().get(), "notp", ranks);
+    }
 }

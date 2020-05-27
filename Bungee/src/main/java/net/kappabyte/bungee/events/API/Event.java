@@ -16,6 +16,7 @@ public class Event {
     public boolean open = false;
 
     public HashMap<String, ProxiedPlayer> players;
+    public HashMap<String, ProxiedPlayer> spectators;
 
     public HashMap<ProxiedPlayer, ServerInfo> playerOriginalPosition;
 
@@ -23,6 +24,7 @@ public class Event {
 
     public Event(String name, ProxiedPlayer host) {
         players = new HashMap<String, ProxiedPlayer>();
+        spectators = new HashMap<String, ProxiedPlayer>();
         playerOriginalPosition = new HashMap<ProxiedPlayer, ServerInfo>();
 
         this.name = name;

@@ -52,24 +52,24 @@ public class BungeeMessageHandler {
                     if(leaderboard.length >= 1 && leaderboard[0] != null) {
                         EventSystemAPI.setFirstPlace(leaderboard[0]);
                         if(Tournament.getTournamentActive()) {
-                            Tournament.getTournament().giveTeamPoints(Events.instance.getProxy().getPlayer(leaderboard[0]), 3);
+                            Tournament.getTournament().giveTeamPoints(leaderboard[0], 3);
                         }
                     }
                     if(leaderboard.length >= 2 && leaderboard[1] != null) {
                         EventSystemAPI.setSecondPlace(leaderboard[1]);
                         if(Tournament.getTournamentActive()) {
-                            Tournament.getTournament().giveTeamPoints(Events.instance.getProxy().getPlayer(leaderboard[1]), 2);
+                            Tournament.getTournament().giveTeamPoints(leaderboard[1], 2);
                         }
                     }
                     if(leaderboard.length >= 3 && leaderboard[2] != null) {
                         EventSystemAPI.setThirdPlace(leaderboard[2]);
                         if(Tournament.getTournamentActive()) {
-                            Tournament.getTournament().giveTeamPoints(Events.instance.getProxy().getPlayer(leaderboard[2]), 1);
+                            Tournament.getTournament().giveTeamPoints(leaderboard[2], 1);
                         }
                     }
                 }
                 ConfigManager.saveAll();
-                EventSystemAPI.endGame();
+                EventSystemAPI.endGame(player != "notp");
                 break;
             case "eventhistory":
                 EventSystemAPI.getPastEvents(player);
@@ -77,6 +77,10 @@ public class BungeeMessageHandler {
             case "updateplayerbalance":
                 BungeeAPI.sendMessage("updateplayerbalance", player, CurrencyHandler.getInstance().updateCurrency(player, Integer.parseInt(value)) + "");
                 break;
+            case "updatetournament":
+                if(Tournament.getTournamentActive()) {
+                    Tournament.getTournament().sendAllData();
+                }
         }
     }
 }

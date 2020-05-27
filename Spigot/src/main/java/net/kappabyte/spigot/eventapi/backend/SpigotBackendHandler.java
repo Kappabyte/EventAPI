@@ -63,20 +63,20 @@ public class SpigotBackendHandler implements BackendHandler {
 
     @Override
     public void endGame() {
-        EventSystemAPI.endGame();
+        EventSystemAPI.endGame(true);
     }
 
     @Override
-    public void endGame(GamePlayer[] rankings) {
+    public void endGame(String[] rankings) {
         if(rankings != null) {
             if(rankings.length >= 1 && rankings[0] != null) {
-                EventSystemAPI.setFirstPlace(rankings[0].name);
+                EventSystemAPI.setFirstPlace(rankings[0]);
             }
             if(rankings.length >= 2 && rankings[1] != null) {
-                EventSystemAPI.setFirstPlace(rankings[1].name);
+                EventSystemAPI.setFirstPlace(rankings[1]);
             }
             if(rankings.length >= 3 && rankings[2] != null) {
-                EventSystemAPI.setFirstPlace(rankings[2].name);
+                EventSystemAPI.setFirstPlace(rankings[2]);
             }
         }
         try {
@@ -84,7 +84,33 @@ public class SpigotBackendHandler implements BackendHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        EventSystemAPI.endGame();
+        EventSystemAPI.endGame(true);
+    }
+
+    @Override
+    public void endGameNoTP() {
+        EventSystemAPI.endGame(false);
+    }
+
+    @Override
+    public void endGameNoTP(String[] rankings) {
+        if(rankings != null) {
+            if(rankings.length >= 1 && rankings[0] != null) {
+                EventSystemAPI.setFirstPlace(rankings[0]);
+            }
+            if(rankings.length >= 2 && rankings[1] != null) {
+                EventSystemAPI.setFirstPlace(rankings[1]);
+            }
+            if(rankings.length >= 3 && rankings[2] != null) {
+                EventSystemAPI.setFirstPlace(rankings[2]);
+            }
+        }
+        try {
+            Events.instance.pasteventsConfig.save(Events.instance.pasteventsConfigFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        EventSystemAPI.endGame(false);
     }
 
 }

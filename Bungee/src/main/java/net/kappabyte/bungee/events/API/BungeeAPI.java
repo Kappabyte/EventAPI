@@ -19,6 +19,14 @@ public class BungeeAPI {
     public static void removePlayer(ProxiedPlayer player) {
         sendToBukkit("events:api", "remove", player.getName(), "");
     }
+
+    public static void addSpectator(ProxiedPlayer player) {
+        sendToBukkit("events:api", "adds", player.getName(), "");
+    }
+    public static void removeSpectator(ProxiedPlayer player) {
+        sendToBukkit("events:api", "removes", player.getName(), "");
+    }
+
     public static void sendPastEvents(String jsonData, String player) {
         sendToBukkit("events:api", "eventhistory", player, jsonData);
     }

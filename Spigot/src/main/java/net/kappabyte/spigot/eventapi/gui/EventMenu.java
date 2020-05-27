@@ -18,7 +18,7 @@ public class EventMenu extends Gui {
         super.initializeItems();
         inv.setItem(10, createGuiItem(Material.LIME_WOOL, ChatColor.GREEN + "Open Event"));
         inv.setItem(16, createGuiItem(Material.RED_WOOL, ChatColor.RED + "Close Event"));
-        inv.setItem(13, createGuiItem(Material.ORANGE_WOOL, ChatColor.GOLD + "Broadcast Event"));
+        inv.setItem(13, createGuiItem(Material.ORANGE_WOOL, ChatColor.WHITE + "Broadcast Event"));
         inv.setItem(40, createGuiItem(Material.ANVIL, ChatColor.DARK_GRAY + "Kick Players"));
     }
 
@@ -26,7 +26,9 @@ public class EventMenu extends Gui {
     public void onItemClicked(Player player, int slot) {
         switch(slot) {
             case 10:
+                API.getPlugin().getLogger().info("sending open message!");
                 API.handler.openEvent();
+                API.getPlugin().getLogger().info("sent open message!");
                 break;
             case 16:
                 API.handler.closeEvent();

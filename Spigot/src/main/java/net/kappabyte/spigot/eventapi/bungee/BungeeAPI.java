@@ -17,6 +17,7 @@ public class BungeeAPI implements PluginMessageListener {
     private static ArrayList<String> seenUUIDS = new ArrayList<String>();
 
     public void sendData(String key, Player player, String playerName, String value) {
+        API.getPlugin().getLogger().info("Sending message " + key + " to bungee!");
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(key);
         out.writeUTF(playerName);

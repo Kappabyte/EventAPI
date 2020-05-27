@@ -11,7 +11,9 @@ import net.kappabyte.bungee.events.API.currency.CurrencyHandler;
 import net.kappabyte.bungee.events.Config.ConfigManager;
 import net.kappabyte.bungee.events.commands.JoinEventCmd;
 import net.kappabyte.bungee.events.commands.LeaveEventCmd;
+import net.kappabyte.bungee.events.commands.LeaveSpectateCmd;
 import net.kappabyte.bungee.events.commands.ReloadCmd;
+import net.kappabyte.bungee.events.commands.SpectateCmd;
 import net.kappabyte.bungee.events.commands.TeamCmd;
 import net.kappabyte.bungee.events.commands.TournamentCmd;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -27,6 +29,8 @@ public class Events extends Plugin implements Listener {
 
         getProxy().getPluginManager().registerCommand(this, new JoinEventCmd());
         getProxy().getPluginManager().registerCommand(this, new LeaveEventCmd());
+        getProxy().getPluginManager().registerCommand(this, new SpectateCmd());
+        getProxy().getPluginManager().registerCommand(this, new LeaveSpectateCmd());
         getProxy().getPluginManager().registerCommand(this, new ReloadCmd());
         getProxy().getPluginManager().registerCommand(this, new TournamentCmd());
         getProxy().getPluginManager().registerCommand(this, new TeamCmd());

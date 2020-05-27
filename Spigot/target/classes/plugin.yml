@@ -15,3 +15,11 @@ commands:
     description: Manage the event API
     permission: eventapi.admin
     usage: /eventapi [reload]
+  tournamenttp:
+    description: Teleport all players to the tournament hub
+    permission: eventapi.admin
+    usage: /tournamenttp
+  revive:
+    description: Revives a player
+    permission: eventapi.admin
+    usage: /revive <player>
